@@ -20,4 +20,4 @@ databases:
     plan: free
     region: ohio
     databaseName: futbol_db
-    user: postgres
+    user: futbol_user
