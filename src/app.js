@@ -4,6 +4,29 @@ const pool = require('./config/db');
 const app = express();
 app.use(express.json());
 
+// Crear tabla si no existe en la nube
+const initDB = async () => {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS equipos (
+        id SERIAL PRIMARY KEY,
+        nombre VARCHAR(50) NOT NULL,
+        puntos INT DEFAULT 0,
+        diferencia_goles INT DEFAULT 0
+      );
+    `);
+    // Insertar datos de prueba si está vacía
+    const result = await pool.query('SELECT COUNT(*) FROM equipos');
+    if (parseInt(result.rows[0].count) === 0) {
+      await pool.query("INSERT INTO equipos (nombre, puntos, diferencia_goles) VALUES ('ITP F.C.', 9, 5), ('Sistemas FC', 7, 3);");
+    }
+    console.log('✅ Tabla equipos verificada en PostgreSQL');
+  } catch (error) {
+    console.error('❌ Error creando tabla', error);
+  }
+};
+initDB();
+
 // Endpoint de Salud para Render (Health Check)
 app.get('/api/health', async (req, res) => {
   try {
